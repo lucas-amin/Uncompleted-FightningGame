@@ -1,0 +1,38 @@
+# depslib dependency file v1.0
+1447783256 source:d:\pasta do thiago\utfpr\prog\c++\allegro\teste\main.cpp
+	<allegro5/allegro.h>
+	<allegro5/allegro_native_dialog.h>
+	<allegro5/allegro_primitives.h>
+	<allegro5/allegro_image.h>
+	<cstdlib>
+	<ctime>
+	"personagens.hpp"
+
+1447712778 d:\pasta do thiago\utfpr\prog\c++\allegro\teste\personagens.hpp
+
+1447806910 source:c:\users\lucas\desktop\teste-master (8)\teste-master\main.cpp
+	<allegro5/allegro.h>
+	<allegro5/allegro_native_dialog.h>
+	<allegro5/allegro_primitives.h>
+	<allegro5/allegro_image.h>
+	<cstdlib>
+	<ctime>
+	<allegro5/allegro_font.h>
+	<allegro5/allegro_ttf.h>
+	"personagens.hpp"
+
+1447802574 c:\users\lucas\desktop\teste-master (8)\teste-master\personagens.hpp
+
+1447809941 source:c:\users\lucas\desktop\definitive\main.cpp
+	<allegro5/allegro.h>
+	<allegro5/allegro_native_dialog.h>
+	<allegro5/allegro_primitives.h>
+	<allegro5/allegro_image.h>
+	<cstdlib>
+	<ctime>
+	<allegro5/allegro_font.h>
+	<allegro5/allegro_ttf.h>
+	"personagens.hpp"
+
+1447809011 c:\users\lucas\desktop\definitive\personagens.hpp
+
