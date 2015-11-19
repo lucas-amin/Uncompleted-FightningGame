@@ -98,9 +98,8 @@ int main(int argc, char *argv[])
 	ALLEGRO_BITMAP *imageL;
 	ALLEGRO_BITMAP *imageER;
 	ALLEGRO_BITMAP *imageEL;
-	ALLEGRO_BITMAP *imageSR;
-	ALLEGRO_BITMAP *imageSL;
 
+    ALLEGRO_BITMAP *imageBackground = NULL;
 
 // -------- INICIALIZAÇÃO DE OBJETOS --------
 
@@ -108,52 +107,38 @@ int main(int argc, char *argv[])
     Projetil balas[NUM_BALAS];
     Inimigo* inimigos = new Inimigo[NUM_INIMIGOS];
     Sprite sprites[numSprites];
+    Background BG;
+
 
     imageR = al_load_bitmap("MoveR.png");
     imageL = al_load_bitmap("MoveL.png");
     imageER = al_load_bitmap("EspadaR.png");
     imageEL = al_load_bitmap("EspadaL.png");
-    imageSR = al_load_bitmap("StandR.png");
-    imageSL = al_load_bitmap("StandL.png");
+    imageBackground = al_load_bitmap("back.png");
+    BG.image = imageBackground;
+
+    InitBackground(BG, 0, 0, 0, 0, width, height, 0, 0, imageBackground);
 
     al_convert_mask_to_alpha(imageR, al_map_rgb(96, 80, 0));
     al_convert_mask_to_alpha(imageL, al_map_rgb(96, 80, 0));
     al_convert_mask_to_alpha(imageER, al_map_rgb(96, 80, 0));
     al_convert_mask_to_alpha(imageEL, al_map_rgb(96, 80, 0));
 
+    sprites[0].initSprites(imageR);
+    sprites[1].initSprites(imageL);
+    sprites[2].initSprites(imageER);
+    sprites[3].initSprites(imageEL);
 
-    InitSprites(sprites[0], imageR);
-    InitSprites(sprites[1], imageL);
-    InitSprites(sprites[2], imageER);
-    InitSprites(sprites[3], imageEL);
-    InitSprites(sprites[4], imageSR);
-    InitSprites(sprites[5], imageSL);
-
-
-
-
-    //Atacando para direita
-    sprites[2].frameDelay = 8;
     sprites[2].frameWidth = 138;
-	sprites[2].frameHeight = 96;
+	sprites[2].frameHeight = 90;
 	sprites[2].x = 200;
 	sprites[2].y = 490;
 
-    //Atacando para esquerda
-    sprites[3].frameWidth = 150;
-	sprites[3].frameHeight = 96;
+    sprites[3].frameWidth = 138;
+	sprites[3].frameHeight = 90;
 	sprites[3].x = 200;
 	sprites[3].y = 490;
-
-    // Parado para direita
-    sprites[4].maxFrame = 1;
-    sprites[4].frameWidth = 101;
-	sprites[4].frameHeight = 75;
-
-	// Parado para esquerda
-    sprites[5].maxFrame = 1;
-    sprites[5].frameWidth = 101;
-	sprites[5].frameHeight = 75;
+	sprites[3].frameDelay = 8;
 
 // _______________________________________________________
 
@@ -205,8 +190,8 @@ int main(int argc, char *argv[])
                 }
                 case ALLEGRO_KEY_LEFT:{
                     for (i=0 ; i < numSprites ; i++){
-                        sprites[i].velX = 5;
-                        sprites[i].dirX = -1;
+                        sprites[0].velX = 5;
+                        sprites[0].dirX = -1;
                     }
                     direita = false;
                     parado = false;
@@ -214,8 +199,8 @@ int main(int argc, char *argv[])
                 }
                 case ALLEGRO_KEY_RIGHT:{
                     for (i=0 ; i < numSprites ; i++){
-                        sprites[i].velX = 5;
-                        sprites[i].dirX = 1;
+                        sprites[0].velX = 5;
+                        sprites[0].dirX = 1;
                     }
                     direita = true;
                     parado = false;
@@ -223,16 +208,16 @@ int main(int argc, char *argv[])
                 }
                 case ALLEGRO_KEY_UP:{
                     for (i=0 ; i < numSprites ; i++){
-                        sprites[i].velY = 5;
-                        sprites[i].dirY = -1;
+                        sprites[0].velY = 5;
+                        sprites[0].dirY = -1;
                     }
                     parado = false;
                     break;
                 }
                 case ALLEGRO_KEY_DOWN:{
                     for (i=0 ; i < numSprites ; i++){
-                        sprites[i].velY = 5;
-                        sprites[i].dirY = 1;
+                        sprites[0].velY = 5;
+                        sprites[0].dirY = 1;
                     }
                     parado = false;
                     break;
@@ -249,24 +234,24 @@ int main(int argc, char *argv[])
                 }
                 case ALLEGRO_KEY_UP:{
                     for (i=0 ; i < numSprites ; i++){
-                        sprites[i].velY = 0;
-                        sprites[i].dirY = 1;
+                        sprites[0].velY = 0;
+                        sprites[0].dirY = 1;
                         }
                     parado = true;
                     break;
                 }
                 case ALLEGRO_KEY_DOWN:{
                     for (i=0 ; i < numSprites ; i++){
-                        sprites[i].velY = 0;
-                        sprites[i].dirY = 1;
+                        sprites[0].velY = 0;
+                        sprites[0].dirY = 1;
                         }
                     parado = true;
                     break;
                 }
                 case ALLEGRO_KEY_LEFT:{
                         for (i=0 ; i < numSprites ; i++){
-                        sprites[i].velX = 0;
-                        sprites[i].dirX = 1;
+                        sprites[0].velX = 0;
+                        sprites[0].dirX = 1;
                         }
                     direita = false;
                     parado = true;
@@ -275,8 +260,8 @@ int main(int argc, char *argv[])
                 case ALLEGRO_KEY_RIGHT:
                 {
                     for (i=0 ; i < numSprites ; i++){
-                        sprites[i].velX = 0;
-                        sprites[i].dirX = 1;
+                        sprites[0].velX = 0;
+                        sprites[0].dirX = 1;
                         }
                     direita = true;
                     parado = true;
@@ -286,41 +271,62 @@ int main(int argc, char *argv[])
         }
         else if (ev.type == ALLEGRO_EVENT_TIMER)
         {
+            UpdateBackground(BG);
             frames++;
+            for(i=0;i<numSprites;i++){
+                sprites[i].x = sprites[0].x;
+                sprites[i].y = sprites[0].y;
+            }
 			if(al_current_time() - gameTime >= 1)
 			{
 				gameTime = al_current_time();
 				gameFPS = frames;
 				frames = 0;
 			}
-            //if(!parado){
+            if(!parado){
                 for(int i = 0; i < numSprites; i++)
-                    UpdateSprites(sprites[i]);
-            //}
+                    sprites[i].UpdateSprites();
+            }
 			render = true;
 
             desenha = true;
 
+            /*if (teclas[CIMA])
+                MovePersonagemCima(personagem_principal);
+            if (teclas[BAIXO])
+                MovePersonagemBaixo(personagem_principal);
+            if (teclas[ESQUERDA])
+                MovePersonagemEsquerda(personagem_principal);
+            if (teclas[DIREITA])
+                MovePersonagemDireita(personagem_principal);
+            if (teclas[ESPACO])
+                AtualizaBalas(balas, NUM_BALAS);
+
+            GeraInimigos(inimigos, NUM_INIMIGOS);
+            AtualizaInimigos(inimigos, NUM_INIMIGOS);
+            BalaColidida(balas, NUM_BALAS, inimigos, NUM_INIMIGOS);*/
+
         }
         if(render && al_is_event_queue_empty(fila_eventos))
 		{
+		    DrawBackground(BG);
 			render = false;
 			if (ataque){
                 if(direita){
-                    DrawSprites(sprites[2]);
-                    //UpdateSprites(sprites[2]);
+                    sprites[2].DrawSprites();
+                    sprites[2].UpdateSprites();
                 }
                 else{
                     for(i=0 ; i < sprites[3].frameCount ; i++)
-                    DrawSprites(sprites[3]);
-                    //UpdateSprites(sprites[3]);
+                    sprites[3].DrawSprites();
+                    sprites[3].UpdateSprites();
                 }
 			}
 			else{
             if(direita)
-				DrawSprites(sprites[0]);
+				sprites[0].DrawSprites();
             else
-                DrawSprites(sprites[1]);
+                sprites[1].DrawSprites();
 			}
 			//al_draw_textf(font18, al_map_rgb(255, 0, 255), 5, 5, 0, "FPS: %i", gameFPS);
 
@@ -365,13 +371,13 @@ int main(int argc, char *argv[])
     al_destroy_display(display);
     al_destroy_event_queue(fila_eventos);
     al_destroy_timer(timer);
+    al_destroy_bitmap(imageBackground);
+    al_destroy_bitmap(imageEL);
+    al_destroy_bitmap(imageER);
+    al_destroy_bitmap(imageL);
+    al_destroy_bitmap(imageR);
     delete[] inimigos;
-	al_destroy_bitmap(imageEL);
-	al_destroy_bitmap(imageER);
-	al_destroy_bitmap(imageR);
-	al_destroy_bitmap(imageL);
-	al_destroy_bitmap(imageSL);
-	al_destroy_bitmap(imageSR);
+
 //___________________________________________
     return 0;
 }

@@ -42,8 +42,9 @@ public:
     bool ativo;
 };
 
-struct Sprite
+class Sprite
 {
+public:
 	float x;
 	float y;
 	float velX;
@@ -61,64 +62,113 @@ struct Sprite
 	int animationDirection;
 
 	ALLEGRO_BITMAP *image;
+
+
+    void initSprites(ALLEGRO_BITMAP *imageo)
+    {
+        x = 220;
+        y = 500;
+        velX = 0;
+        velY = 0;
+        dirX = -1;
+        dirY = -1;
+
+        maxFrame = 4;
+        curFrame = 0;
+        frameCount = 0;
+        frameDelay = 8;
+        frameWidth = 74;
+        frameHeight = 99;
+        animationColumns = 16;
+        animationDirection = 1;
+
+        image = imageo;
+    }
+
+
+    void UpdateSprites()
+    {
+        if(++frameCount >= frameDelay)
+        {
+            curFrame += animationDirection;
+            if(curFrame >= maxFrame)
+                curFrame = 0;
+            else if(curFrame <= 0)
+                curFrame = maxFrame - 1;
+            frameCount = 0;
+        }
+
+        x += velX * dirX;
+        y += velY * dirY;
+
+        if((x <= 0 && dirX == -1) ||
+            (x >= width - frameWidth && dirX == 1))
+        {
+            if (dirX == -1){
+                x += 5;
+                velX = 0;
+            }
+            if (dirX == 1){
+                x += -5;
+                velX = 0;
+            }
+        }
+        if((y <= 0 && dirY == -1) ||
+            (y >= height - frameHeight && dirY == 1))
+        {
+            if (dirY == -1){
+                y += 5;
+                velY = 0;
+            }
+            if (dirY == 1){
+                y += -5;
+                velY = 0;
+            }
+        }
+    }
+
+    void DrawSprites()
+    {
+        int fx = (curFrame % animationColumns) * frameWidth;
+        int fy = (curFrame / animationColumns) * frameHeight;
+
+        al_draw_bitmap_region(image, fx, fy, frameWidth, frameHeight, x, y, 0);
+    }
 };
 
-void InitSprites(Sprite &sprite, ALLEGRO_BITMAP *image)
+class Background
 {
-	sprite.x = 220;
-	sprite.y = 500;
-	sprite.velX = 0;
-	sprite.velY = 0;
-	sprite.dirX = -1;
-	sprite.dirY = -1;
+    public:
+	float x;
+	float y;
+	float velX;
+	float velY;
+	int dirX;
+	int dirY;
 
-	sprite.maxFrame = 4;
-	sprite.curFrame = 0;
-	sprite.frameCount = 0;
-	sprite.frameDelay = 8;
-	sprite.frameWidth = 74;
-	sprite.frameHeight = 99;
-	sprite.animationColumns = 16;
-	sprite.animationDirection = 1;
+	int largura;
+	int altura;
 
-	sprite.image = image;
+	ALLEGRO_BITMAP *image;
+};
+
+void InitBackground(Background &backg, float x, float y, float velx, float vely, int largura, int altura, int dirX, int dirY, ALLEGRO_BITMAP *image)
+{
+	backg.x += backg.velX * backg.dirX;
+	if(backg.x + backg.largura <= 0)
+		backg.x = 0;
 }
-
-void UpdateSprites(Sprite &sprite)
+void DrawBackground(Background &backg)
 {
-    sprite.x += sprite.velX * sprite.dirX;
-	sprite.y += sprite.velY * sprite.dirY;
+	al_draw_bitmap(backg.image, backg.x, backg.y, 0);
 
-    	if(++sprite.frameCount >= sprite.frameDelay)
-	{
-		sprite.curFrame += sprite.animationDirection;
-		if(sprite.curFrame >= sprite.maxFrame)
-			sprite.curFrame = 0;
-		else if(sprite.curFrame <= 0)
-			sprite.curFrame = sprite.maxFrame - 1;
-		sprite.frameCount = 0;
-	}
-/*
-	if((sprite.x <= 0 && sprite.dirX == -1) ||
-		(sprite.x >= width - sprite.frameWidth && sprite.dirX == 1))
-	{
-		sprite.dirX *= -1;
-		sprite.animationDirection *= -1;
-	}
-	if((sprite.y <= 0 && sprite.dirY == -1) ||
-		(sprite.y >= height - sprite.frameHeight && sprite.dirY == 1))
-	{
-		sprite.dirY *= -1;
-		sprite.animationDirection *= -1;
-	}*/
+	if(backg.x + backg.largura < width)
+		al_draw_bitmap(backg.image, backg.x + backg.largura, backg.y, 0);
 }
-
-
-void DrawSprites(Sprite &sprite)
+void UpdateBackground(Background &backg)
 {
-	int fx = (sprite.curFrame % sprite.animationColumns) * sprite.frameWidth;
-	int fy = (sprite.curFrame / sprite.animationColumns) * sprite.frameHeight;
-
-	al_draw_bitmap_region(sprite.image, fx, fy, sprite.frameWidth, sprite.frameHeight, sprite.x, sprite.y, 0);
+	backg.x += backg.velX * backg.dirX;
+	if(backg.x + backg.largura <= 0)
+		backg.x = 0;
 }
 #endif // PERSONAGENS_HPP_INCLUDED
